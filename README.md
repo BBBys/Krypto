@@ -17,6 +17,10 @@ einem fortlaufenden Text den Geheimtext für diesen Buchstaben bildet
 
 Statistik
 
+### Vorbereitung
+
+Umwandlung eines Textes in nur-Großbuchstaben
+
 # Lizenz
 
 Krypto © 2026 by Dr. Burkhard Borys
