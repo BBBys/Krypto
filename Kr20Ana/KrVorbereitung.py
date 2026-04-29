@@ -35,7 +35,7 @@ def main(ein, aus, länge, Dbg):
         i = 0
         z = 0
         while i < len(txt):
-            f.write(txt[i : i + länge]+"\n")
+            f.write(txt[i : i + länge] + "\n")
             i += länge
             z += 1
     print(f"{z} Zeilen auf {aus} geschrieben")
