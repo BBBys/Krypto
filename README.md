@@ -1,8 +1,8 @@
 # Krypto
 
- Kryptografie-Programme
+Kryptografie-Programme
 
-# Bestandteile /Themen
+# Bestandteile / Themen
 
 ## Substitution
 
@@ -12,6 +12,22 @@ Substitutionscode, Cäsar oder mehr.
 
 Polyalphabetische Substitution, bei der die Position eines Buchstabens in
 einem fortlaufenden Text den Geheimtext für diesen Buchstaben bildet
+
+### KrIndexCode
+
+### KrIndexKey
+
+Aufbau eines Index-Keys aus einem Schlüsseltext.
+Parameter|ist
+---|---|---
+1.||Vorlage
+2.||Schlüssel
+-v||Debug
+-l|n|Code n Zeichen
+
+### ixkey
+
+Verschlüsselung, Entschlüsselung
 
 ## Analyse
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Krypto/IndexKey © 2026 by Dr. Burkhard Borys
@@ -24,6 +24,7 @@ def main(sdatei, kdatei, länge, Dbg):
     with open(sdatei, "r") as f:
         schlüssel = f.read()
     schlüssel = KrVorbereitung(schlüssel)
+    print(f"{len(schlüssel)} Zeichen als Vorlage für Schlüssel")
     schlüssel = schlüssel[:länge]
     if Dbg:
         logging.debug("Schlüssel:")
@@ -50,6 +51,7 @@ def main(sdatei, kdatei, länge, Dbg):
         for c in ixkey:
             f.write(c)
             f.write("\n")
+    print(f"{len(ixkey)} Zeichen als Schlüssel in \n{kdatei} geschrieben.")
 
 
 if __name__ == "__main__":

@@ -55,7 +55,6 @@ def main(sdatei, kdatei, länge, Dbg):
             f.write(c)
             f.write("\n")
 
-
     cipher = IxKeyEnc(txt, ixkey)
     logging.debug(f"Verschlüsselt: {cipher}")
 
