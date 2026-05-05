@@ -15,10 +15,20 @@ einem fortlaufenden Text den Geheimtext für diesen Buchstaben bildet
 
 ### KrIndexCode
 
+Verschlüsselung eines Textes mit einem Indexkey.
+
+Parameter||ist
+---|---|---
+1.||Klartext
+2.||Schlüssel
+3.||verschlüsselter Text
+-v||Debug
+
 ### KrIndexKey
 
 Aufbau eines Index-Keys aus einem Schlüsseltext.
-Parameter|ist
+
+Parameter||ist
 ---|---|---
 1.||Vorlage
 2.||Schlüssel
@@ -33,16 +43,17 @@ Verschlüsselung, Entschlüsselung
 
 Statistik
 
+## Kryptolib
+
 ### Vorbereitung
 
 Umwandlung eines Textes in nur-Großbuchstaben
 
 # Lizenz
 
-Krypto © 2026 by Dr. Burkhard Borys
-is licensed under CC BY-NC-ND 4.0.
+Krypto © 2026 by Dr. Burkhard Borys is licensed under CC BY-NC-ND 4.0.
 To view a copy of this license, visit
-<https://creativecommons.org/licenses/by-nc-nd/4.0/>
+[creative commons org](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 # Quellen
 

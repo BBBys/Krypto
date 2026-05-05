@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Krypto/IndexKey © 2026 by Dr. Burkhard Borys
 # is licensed under CC BY-NC-ND 4.0.
 #
-# KrIndexKey.py
+# KrIndexCode.py
 #
 # Wichtig:
 # export PYTHONPATH="../Kryptolib"
@@ -12,53 +12,49 @@
 
 import argparse, logging, string, os
 from KrVorbereitung import *
-from KrPrint import print5
+
+# from KrPrint import print5
 from ixkey import *
 
-TITEL = "KrIndexKey"
+TITEL = "KrIndexCode"
 VERSION = "V1.1"
-DESCRIPTION = """Aufbau eines Index-Keys aus einem Schlüsseltext"""
+DESCRIPTION = """Verschlüsselung eines Textes mit einem Index-Key"""
 
 
-def main(sdatei, kdatei, länge, Dbg):
-    with open(sdatei, "r") as f:
-        txt = f.read()
-    schlüssel = "FC Bayern in der Champions League: Ein Albtraum, aus dem es kein Erwachen gibt. Erst patzt Manuel Neuer, dann der Schiedsrichter: Das unglückliche Aus im Halbfinale stürzt den FC Bayern in tiefe Schockstarre. Ein höchst emotionaler Thomas Tuchel schwankt zwischen Trauer, Wut und Verzweiflung. Lachs aus Aquakulturen: »Die Menschen wollen keinen Lachs essen, für den die Umwelt zerstört wird«. In Norwegen wird das Angeln von Wildlachs eingeschränkt, um die Tiere zu schützen. In Kanada sollen Aquakulturen verschwinden, weil sie Ökosysteme zerstören. Wissenschaftler Eirik Biering sagt, was sich bei der Fischzucht ändern muss."
-    schlüssel = KrVorbereitung(schlüssel)
-    schlüssel = schlüssel[:länge]
-    txt = KrVorbereitung(txt)
-    if Dbg:
-        logging.debug("Schlüssel:")
-        print5(schlüssel)
-        logging.debug("Text:")
-        print5(txt)
+def main(eindatei, schlüsseldatei, ausdatei, Dbg):
+    with open(schlüsseldatei, "rt") as fEin:
+        ixkey = fEin.read()
+    print(f"{len(ixkey)}\tZeichen im Schlüssel")
 
-    ixkey = []
-    for i in range(len(schlüssel)):
-        c = schlüssel[i]
-        ixkey.append(c)
+    zeilenEin = ZeilenAus = ZeichenEin = 0
+    with open(eindatei, "rt") as fEin, open(ausdatei, "wt") as fAus:
+        zeile = fEin.readline()
+        while len(zeile) > 0:
+            # noch nicht zuende
+            lZeile = len(zeile)
+            ZeichenEin += lZeile
+            zeilenEin += 1
 
-    # was fehlt?
-    fehlt = []
-    for c in string.ascii_uppercase:
-        if c not in ixkey:
-            fehlt.append(c)
-    lf = len(fehlt)
-    if lf > 0:
-        logging.debug(f"Fehlende Zeichen: {fehlt}")
-        ixkey += fehlt
-    else:
-        logging.debug("Alle Zeichen vorhanden")
-    logging.debug(f"Index-Key: {ixkey}")
-    with open(kdatei, "wt") as f:
-        for c in ixkey:
-            f.write(c)
-            f.write("\n")
+            if lZeile < 2:
+                # Leerzeile
+                zeile = fEin.readline()
+                continue
+            # len(txt) für leere Zeilen ist =1,
+            # da das Zeilenende \n mitgelesen wird.
+            zeile = KrVorbereitung(zeile)
+            cipher = IxKeyEnc(zeile, ixkey)
+            fAus.write(str(cipher) + "\n")
+            ZeilenAus += 1
 
-    cipher = IxKeyEnc(txt, ixkey)
-    logging.debug(f"Verschlüsselt: {cipher}")
+            if zeilenEin % 80 == 0:
+                print(f"\n{zeilenEin}\tZeilen")
+                print(f"{ZeichenEin}\tZeichen gelesen")
+                print(f"{ZeilenAus}\tZeilen geschrieben")
+            zeile = fEin.readline()
 
-    print5(cipher)
+    print(f"\n{zeilenEin}\tZeilen")
+    print(f"{ZeichenEin}\tZeichen gelesen")
+    print(f"{ZeilenAus}\tZeilen geschrieben")
 
 
 if __name__ == "__main__":
@@ -69,26 +65,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=DESCRIPTION, epilog=VERSION)
     # ------------------------------------------------------------
     # Übergabe mit Position
+    parser.add_argument("Text", help="Eingabedatei, wird verschlüsselt")
+    parser.add_argument("Key", help="Schlüsseldatei, die den Schlüssel enthält")
     parser.add_argument(
-        "SText",
-        help="Datei mit Text, aus dem der Schlüssel gebildet wird",
-        default=sys.stdin,
-    )
-    parser.add_argument(
-        "Key",
-        default=sys.stdout,
-        help="Datei, die den Schlüssel erhält",
+        "Aus", help="Ausgabedatei, in die das Ergebnis geschrieben wird"
     )
     parser.add_argument(
         "-v", "--debug", dest="pDbg", help="Debug-Ausgabe", action="store_true"
-    )
-    parser.add_argument(
-        "-l",
-        "--länge",
-        dest="Länge",
-        help="Länge des Index-Keys [9999]",
-        type=int,
-        default=9999,
     )
     # ------------------------------------------------------------
     arguments = parser.parse_args()
@@ -98,12 +81,17 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.ERROR)
-    sfile = arguments.SText
-    kfile = arguments.Key
-    if not os.path.exists(sfile):
-        logging.exception(f"Pfad {sfile} existiert nicht.")
-        raise Exception(f"Pfad {sfile} existiert nicht.")
+    eingabe = arguments.Text
+    schlüssel = arguments.Key
+    ausgabe = arguments.Aus
+    if not os.path.exists(eingabe):
+        logging.exception(f"Eingabedatei, Pfad {eingabe} existiert nicht.")
+        raise Exception(f"{eingabe} existiert nicht.")
+    if not os.path.exists(schlüssel):
+        logging.exception(f"Schlüssel, Pfad {schlüssel} existiert nicht.")
+        raise Exception(f"Pfad {schlüssel} existiert nicht.")
 
     # ------------------------------------------------------------
     # Programm aufrufen
-    main(sfile, kfile, arguments.Länge, Dbg)
+    main(eingabe, schlüssel, ausgabe, Dbg)
+    sys.exit(99)

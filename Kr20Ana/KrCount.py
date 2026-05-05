@@ -14,27 +14,12 @@ import logging, os, time
 import pandas as pd
 from collections import Counter
 from string import Template
-
+from KrKoiIx import koiIx
 
 TITEL = "KrCount"
 VERSION = "V1.0"
 DESCRIPTION = """Ermittelt die Häufigkeit von Zeichen, Bi- und 
 Trigrammen in einem Text"""
-
-
-def koiIx(häufigkeiten, nToken):
-    sum_hxh1 = 0
-    sum_pxp = 0
-
-    for zeichen in häufigkeiten:
-        absHäufType = häufigkeiten[zeichen]
-        relHäufType = absHäufType / nToken
-        sum_hxh1 += absHäufType * (absHäufType - 1)
-        sum_pxp += relHäufType * relHäufType
-
-    koinzidenz = sum_hxh1 / (nToken * (nToken - 1))
-
-    return koinzidenz
 
 
 def main(ein, aus, Dbg):
@@ -173,26 +158,6 @@ Koinzidenz-Index: $k7
             k7=f"{k7:.4f}",
         )
     )
-
-
-def read_clean_text(path):
-    """Liest Textdatei und entfernt Zeilenumbrüche."""
-    with open(path, "r", encoding="utf-8") as f:
-        text = f.read()
-    return text.replace("\n", "").strip()
-
-
-def count_ngrams(text, n):
-    """Zählt n-Gramme im Text.
-    Ergebnis: Pandas Datafile mit n-Grammen und deren Häufigkeit."""
-    return Counter(text[i : i + n] for i in range(len(text) - n + 1))
-
-
-def save_counter_to_csv(counter, filename):
-    """Speichert Counter als CSV-Datei."""
-    df = pd.DataFrame(counter.items(), columns=["ngram", "count"])
-    df = df.sort_values("count", ascending=False)
-    df.to_csv(filename, index=False)
 
 
 if __name__ == "__main__":
